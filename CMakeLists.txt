@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+include_directories("${PROJECT_SOURCE_DIR}/include/")
+add_executable(pan_tilt_controller src/pan_tilt_controller.cpp)
+target_link_libraries(pan_tilt_controller usb-1.0 lcm)
