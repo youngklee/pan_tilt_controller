@@ -88,8 +88,8 @@ int main()
     PositionMessageHandler handlerObject;
     lcm.subscribe("target_position", &PositionMessageHandler::handleMessage, &handlerObject);
     
-    int img_length = 320;
-    int img_height = 240;
+    const int img_length = 640;
+    const int img_height = 480;
 
     int x_center = img_length/2;
     int y_center = img_height/2;
