@@ -44,7 +44,8 @@ void setTarget(int position, int servo)
     libusb_exit(ctx);
 }
 
-int16_t x_target, y_target;
+int16_t x_target = 0;
+int16_t y_target = 0;
 
 class PositionMessageHandler
 {
@@ -61,14 +62,14 @@ public:
 
 const int min_angle = 0;
 const int max_angle = 180;
-const int pan_min_position = 550;
-const int pan_max_position = 2550;
-const int tilt_min_position = 500;
-const int tilt_max_position = 2000;
+const int pan_min_position = 500;
+const int pan_max_position = 2000;
+const int tilt_min_position = 550;
+const int tilt_max_position = 2550;
 
 int angle_to_position(double angle, int min_position, int max_position)
 {
-    int position = (int)
+    int position =
         (angle - min_angle)/(max_angle - min_angle)*(max_position - min_position)
         + min_position;
 
@@ -93,9 +94,17 @@ int main()
 
     int x_center = img_length/2;
     int y_center = img_height/2;
+    x_target = x_center;
+    y_target = y_center;
 
-    int center_threshold = 5;
-    int servo_step_size = 5;
+    int center_threshold = 25;
+    int servo_step_size = 1;
+    int pan_angle = 90;
+    int tilt_angle = 90;
+    const int pan_servo = 13;
+    const int tilt_servo = 12;
+
+    setTarget(600, pan_servo);
 
     while(1)
     {
@@ -110,16 +119,14 @@ int main()
             lcm.handle();
         }
         else {
-            int pan_angle, tilt_angle;
-            const int pan_servo = 12;
-            const int tilt_servo = 13;
+           cout << x_target << ", " << y_target << endl;
 
-            if (x_target < x_center - center_threshold) {
+            if (x_target < (x_center - center_threshold)) {
                 if (pan_angle >= 5)
                     pan_angle -= servo_step_size;
             }
             else if (x_target > x_center + center_threshold) {
-                if (pan_angle <=175)
+                if (pan_angle <= 175)
                     pan_angle += servo_step_size;
             }
             
@@ -128,19 +135,19 @@ int main()
                     tilt_angle -= servo_step_size;
             }
             else if (y_target > y_center + center_threshold) {
-                if (tilt_angle <=175)
+                if (tilt_angle <= 175)
                     tilt_angle += servo_step_size;
             }
             
             int pan_position = angle_to_position(pan_angle, pan_min_position, pan_max_position);
-            int tilt_position = angle_to_position(tilt_angle, tilt_min_position, tilt_min_position);
+            int tilt_position = angle_to_position(tilt_angle, tilt_min_position, tilt_max_position);
 
-            cout << "Pan, tilt angle: " << pan_angle << tilt_angle << endl;
+            cout << "tilt angle, tilt position: " << tilt_angle << ", " << tilt_position << endl;
 
             setTarget(pan_position, pan_servo);
             setTarget(tilt_position, tilt_servo);
 
-            usleep(20000);
+            usleep(100000);
         }
     }
     return 0;
