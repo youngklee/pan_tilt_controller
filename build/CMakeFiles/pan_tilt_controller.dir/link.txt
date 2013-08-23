@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/pan_tilt_controller.dir/src/pan_tilt_controller.cpp.o  -o ../bin/pan_tilt_controller -rdynamic -lusb-1.0 -llcm 
